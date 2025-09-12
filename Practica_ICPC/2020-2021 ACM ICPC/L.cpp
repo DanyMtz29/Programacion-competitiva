@@ -1,55 +1,60 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-const int MAX = 200005;
+const int MAX = 481;
 
 int32_t main(){
     int n,m; cin>>n>>m;
     int axis[MAX];
-    for( int i = 0 ; i <= MAX ; i++ ){
+    int axis2[MAX];
+    axis[MAX] = INT_MAX;
+    for( int i = 0 ; i <= MAX-1 ; i++ ){
         axis[i] = 0;
+        axis2[i] = 0;
     }
-
     for( int i = 0 ; i < n ; i++ ){
         int s,d;
         cin>>s>>d;
-        for( int j = s+d ;j>= 0 && j >= s && j > s+d-m ;j--){
-            int min = j;
-            if( j>=480 ){
-                int res = j%m;
-                int div = 480/res;
-                min = div * res;
+        int lim = s+d;
+        while( s<=lim ){
+            if( s%m <= MAX-1 ) {
+                axis[s%m]++;
+                if( s<=MAX-1) {
+                    axis2[s]--;
+                }
+            }
+            s++;
+        }
+    }
+    int mn = INT_MAX;
+    int activities = INT_MAX;
+
+    for( int i = 0 ; i <= MAX-1 && i<m ; i++ ){
+        int curActivites = axis[i];
+        if( curActivites < activities ){
+            activities = curActivites;
+            mn = i;
+        }else if( curActivites == activities ){
+            mn = min(mn,i);
+        }
+        if( axis2[i] < 0 ){
+            curActivites+=axis2[i];
+        }
+        for( int j = i+m; j<= MAX-1 ; j+=m ){
+            if( axis[j] > 0 ){
+                curActivites += axis[j];
+            }
+            if( curActivites < activities ){
+                activities = curActivites;
+                mn = j;
+            }else if( curActivites == activities ){
+                mn = min(mn,j);
+            }
+            if( axis2[j]<0 ){
+                curActivites += axis2[j];
             }
         }
     }
+    cout<<mn<<" "<<activities<<"\n";
     return 0;
 }
-
-/*
-5 30
-195 30
-120 45
-240 30
-30 60
-300 180
-
-451 1
-
-0:30 - 1:30
-2:00 - 2:45
-3:15 - 3:45
-4:00 - 4:30
-5:00 - 8:00
-
-7:31
-
-
-0 - 30 - 60 - 90 - 120 - 150 - 180 - 210 - 240 - 270 - 300 - 330 - 360 - 390 - 420 - 450 - 480
-    ACT1       ACT1
-                   ACT2    ACT2
-                                ACT3    ACT3
-                                           ACT4  ACT4
-                                                       ACT5                                ACT5
-
-
-*/
