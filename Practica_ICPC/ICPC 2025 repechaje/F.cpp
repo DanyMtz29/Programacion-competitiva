@@ -67,7 +67,7 @@
 
 using namespace std;
 
-//Constantes
+//Constantes    
 const int MOD=1e9+7;
 
 //Estructuras

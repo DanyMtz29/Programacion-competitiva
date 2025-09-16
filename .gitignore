@@ -3,3 +3,7 @@
 
 # Ignorar archivos .exe
 *.exe
+
+#Ignorar archivos .vs
+.vscode/
+.json
