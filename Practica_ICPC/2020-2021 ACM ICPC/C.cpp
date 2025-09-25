@@ -33,7 +33,6 @@ int lToR(int idx, int* a, deque<pi>& q, bool flag = true){
     while( it <= n ){
         if(flag && i == n ) i = 0;
         if(!flag && i == -1) i=n-1;
-
         if( a[i] < tar ){
             if( q.empty() ) return INT_MAX;
             while( !q.empty() ){
@@ -52,7 +51,7 @@ int lToR(int idx, int* a, deque<pi>& q, bool flag = true){
                     if( a[i] == tar ) break;
                 }
             }
-        }else if( a[i]>tar ){
+        }else if( a[i]>tar ){            
             int resto = a[i]-tar;
             a[i] = tar;
             q.push_front({it,resto});
@@ -65,11 +64,10 @@ int lToR(int idx, int* a, deque<pi>& q, bool flag = true){
     return ans;
 }
 
-int check(int idx){
+int check(int l, int r){
     deque<pi> q;
-    int left = lToR(idx,arr,q);
-    //cout<<":Left: "<<left<<"\n";
-    int right = lToR(idx,arr2,q,0);
+    int left = lToR(l,arr,q);
+    int right = lToR(r,arr2,q,0);
     return min(left,right);
 }
 
@@ -82,23 +80,54 @@ void solve(){
         cin>>arr[i];
         arr2[i] = arr[i];
         sum += arr[i];
-        if( arr[i]>mx ){
-            mx = arr[i];
-            idxs.clear();
-            idxs.pb(i);
-        }else if( arr[i] == mx ){
-            idxs.pb(i);
-        }
+        
     }
     tar = sum/n;
-    int idx = idxs[idxs.size()/2];
-    // if( idxs.size()%2==0 ) idx = idxs.size()/2;
-    // else idx = idxs.size()/2;
-    cout<<check(idx)<<"\n";
+    
+    //Search a valid index
+
+    int l = 0, r=0, carry = 0, it= 1;
+    while( it < n){
+        int rem = arr[r]-tar;
+        carry += rem;
+        while( carry<0){
+            if( l==0 ) l = n-1;
+            else l--;
+            rem = arr[l]-tar;
+            carry+=rem;
+            it++;
+        }
+        r++;
+        it++;
+    }
+    int L = l;
+    l = 0; r=0; carry = 0; it= 1;
+    while( it < n){
+        int rem = arr[r]-tar;        
+        carry += rem;
+        while( carry<0){
+            l++;
+            rem = arr[l]-tar;
+            carry+=rem;
+            it++;
+        }
+        if(r == 0 )r=n-1;
+        else r--;
+        it++;
+    }
+
+    int R = l;
+    cout<<check(L,R)<<"\n";
 }
 
 int32_t main(){
     IO;
+
+#ifndef ONLINE_JUDGE
+    freopen("input.txt","r",stdin);
+    freopen("output.txt","w",stdout);
+#endif
+
     int t = 1;
     //cin>>t;
     while(t--){
